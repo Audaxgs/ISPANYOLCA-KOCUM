@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>İspanyolca Koçum</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4ff;color:#1a1a2e;min-height:100vh}
+.container{max-width:480px;margin:0 auto;padding:1rem}
+.screen{display:none}.screen.active{display:block}
+.card{background:#fff;border-radius:16px;padding:1.25rem;box-shadow:0 2px 12px rgba(127,119,221,0.1);margin-bottom:1rem}
+.btn{background:transparent;border:1.5px solid #ccc;border-radius:10px;padding:10px 20px;font-size:14px;cursor:pointer;color:#1a1a2e;font-family:inherit;transition:all 0.15s}
+.btn:hover{background:#f0effe;border-color:#7F77DD}
+.btn-primary{background:#7F77DD;border-color:#7F77DD;color:#fff}
+.btn-primary:hover{background:#534AB7;border-color:#534AB7}
+.btn-sm{padding:6px 14px;font-size:13px}
+.btn-block{width:100%;margin-top:0.75rem}
+h1{font-size:22px;font-weight:600;margin-bottom:0.25rem}
+h2{font-size:18px;font-weight:600;margin-bottom:0.5rem}
+h3{font-size:15px;font-weight:600;margin-bottom:0.75rem}
+p.muted{font-size:14px;color:#666;line-height:1.6}
+.progress-bar{height:8px;background:#ede9ff;border-radius:99px;margin:8px 0;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#7F77DD,#9F99FF);border-radius:99px;transition:width 0.5s ease}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:3px 10px;border-radius:99px;font-weight:500}
+.badge-purple{background:#eeedfe;color:#534AB7}
+.badge-amber{background:#faeeda;color:#633806}
+.badge-green{background:#e1f5ee;color:#085041}
+.badge-red{background:#fcebeb;color:#501313}
+.level-badge{background:#9FE1CB;color:#085041;font-size:12px;padding:4px 12px;border-radius:99px;font-weight:600}
+.activity-item{border:1.5px solid #ede9ff;border-radius:12px;padding:1rem;margin-bottom:8px;cursor:pointer;background:#fff;transition:all 0.15s}
+.activity-item:hover{border-color:#7F77DD;background:#faf9ff}
+.activity-item.done{opacity:0.5;pointer-events:none;background:#f9f9f9}
+.chat-area{background:#f5f4ff;border-radius:12px;padding:1rem;min-height:200px;max-height:320px;overflow-y:auto;margin:1rem 0;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:85%;padding:10px 14px;border-radius:12px;font-size:14px;line-height:1.6}
+.msg.ai{background:#fff;border:1px solid #ede9ff;align-self:flex-start}
+.msg.user{background:#7F77DD;color:#fff;align-self:flex-end}
+.input-row{display:flex;gap:8px}
+.input-row input{flex:1;padding:10px 14px;border:1.5px solid #ddd;border-radius:10px;font-size:14px;font-family:inherit;outline:none}
+.input-row input:focus{border-color:#7F77DD}
+.opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:1rem 0}
+.opt-btn{border:1.5px solid #ddd;border-radius:10px;padding:12px;text-align:left;cursor:pointer;background:#fff;font-size:14px;color:#1a1a2e;transition:all 0.15s;font-family:inherit}
+.opt-btn:hover{border-color:#7F77DD}
+.opt-btn.correct{border-color:#1D9E75;background:#e1f5ee;color:#085041}
+.opt-btn.wrong{border-color:#E24B4A;background:#fcebeb;color:#501313}
+.feedback{padding:12px;border-radius:10px;font-size:14px;margin-top:8px}
+.feedback.ok{background:#e1f5ee;color:#085041}
+.feedback.err{background:#fcebeb;color:#501313}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f0effe}
+.stat-row:last-child{border-bottom:none}
+.header-bar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}
+.streak-fire{font-size:20px}
+.trans-input{width:100%;padding:8px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;margin-top:6px;outline:none}
+.trans-input:focus{border-color:#7F77DD}
+.notification-banner{background:#eeedfe;border:1.5px solid #7F77DD;border-radius:12px;padding:1rem;margin-bottom:1rem;display:none}
+.xp-anim{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#7F77DD;color:#fff;padding:12px 24px;border-radius:99px;font-size:18px;font-weight:700;pointer-events:none;opacity:0;transition:all 0.5s;z-index:999}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- XP animasyonu -->
+<div class="xp-anim" id="xp-anim"></div>
+
+<!-- KARŞILAMA -->
+<div id="s-welcome" class="screen active">
+  <div style="text-align:center;padding:2rem 0 1.5rem">
+    <div style="font-size:56px;margin-bottom:0.75rem">🇪🇸</div>
+    <h1>İspanyolca Koçun</h1>
+    <p class="muted" style="margin-top:0.5rem">Her gün 15–30 dakika ile A2'den C1'e çıkacaksın.</p>
+  </div>
+  <div class="card">
+    <h3>Seviye: A2 — İyi Temeller</h3>
+    <p class="muted">Temel cümleleri kurabiliyorsun. Hedefimiz konuşma akıcılığını artırmak ve B1'e geçmek.</p>
+    <div style="margin-top:1rem">
+      <div style="display:flex;justify-content:space-between;font-size:13px;color:#666;margin-bottom:4px">
+        <span>A2</span><span>B1</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:15%"></div></div>
+    </div>
+  </div>
+  <button class="btn btn-primary btn-block" onclick="startApp()" style="padding:14px;font-size:16px">Öğrenmeye Başla →</button>
+</div>
+
+<!-- ANA EKRAN -->
+<div id="s-home" class="screen">
+  <div id="notif-banner" class="notification-banner">
+    <strong>🔔 Hatırlatıcı</strong><br>
+    <span id="notif-msg">Bugün henüz pratik yapmadın! Hadi başlayalım.</span>
+  </div>
+
+  <div class="header-bar">
+    <div>
+      <h2 id="home-greeting">Buenos días! 👋</h2>
+      <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
+        <span class="level-badge" id="home-level">A2</span>
+        <span class="badge badge-purple" id="home-xp">⭐ 0 XP</span>
+        <span class="badge badge-amber" id="home-streak">🔥 0 gün</span>
+      </div>
+    </div>
+    <button class="btn btn-sm" onclick="show('s-profile')">👤 Profil</button>
+  </div>
+
+  <div class="card" style="padding:1rem">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <span style="font-size:13px;color:#666">Bugünkü ilerleme</span>
+      <span style="font-size:13px;font-weight:600" id="daily-pct">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="daily-prog" style="width:0%"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:#999;margin-top:4px">
+      <span id="acts-done">0 / 3 aktivite</span>
+      <span id="today-xp-label">+0 XP bugün</span>
+    </div>
+  </div>
+
+  <h3>Günlük Program</h3>
+  <div id="activities-list"></div>
+
+  <div style="margin-top:1rem;display:flex;gap:8px">
+    <button class="btn btn-sm" onclick="show('s-stats')" style="flex:1">📊 İstatistik</button>
+    <button class="btn btn-sm" onclick="show('s-plan')" style="flex:1">📅 Haftalık Plan</button>
+  </div>
+</div>
+
+<!-- KATEGORİ SEÇ -->
+<div id="s-quiz" class="screen">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:1rem">
+    <button class="btn btn-sm" onclick="goHome()">← Geri</button>
+    <h2 id="quiz-title" style="margin:0">Kelime Testi</h2>
+  </div>
+  <div id="quiz-loading" style="text-align:center;padding:3rem;color:#666;font-size:15px">
+    <div style="font-size:32px;margin-bottom:0.5rem">⏳</div>Sorular hazırlanıyor...
+  </div>
+  <div id="quiz-area" style="display:none">
+    <div style="display:flex;justify-content:space-between;font-size:13px;color:#666;margin-bottom:6px">
+      <span id="quiz-counter">1 / 5</span>
+      <span id="quiz-score-label">✓ 0 doğru</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="quiz-prog" style="width:20%"></div></div>
+    <p style="margin:1rem 0;font-size:15px;font-weight:500;color:#1a1a2e" id="quiz-q"></p>
+    <div class="opts-grid" id="quiz-opts"></div>
+    <div id="quiz-fb" style="display:none" class="feedback"></div>
+    <button class="btn btn-primary btn-block" id="quiz-next" style="display:none" onclick="nextQuizQ()">Devam →</button>
+  </div>
+</div>
+
+<!-- KONUŞMA PRATİĞİ -->
+<div id="s-chat" class="screen">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:0.5rem">
+    <button class="btn btn-sm" onclick="goHome()">← Geri</button>
+    <h2 style="margin:0">Konuşma Pratiği</h2>
+  </div>
+  <p class="muted" style="margin-bottom:0.75rem;font-size:13px">İspanyolca konuş — hatalarını Türkçe düzeltir, en az 4 mesaj yaz.</p>
+  <div class="chat-area" id="chat-msgs"></div>
+  <div class="input-row">
+    <input id="chat-input" type="text" placeholder="İspanyolca yaz..." onkeydown="if(event.key==='Enter')sendChat()">
+    <button class="btn btn-primary" onclick="sendChat()">Gönder</button>
+  </div>
+  <div id="chat-done-area" style="display:none;margin-top:1rem">
+    <button class="btn btn-primary btn-block" onclick="completeChatAct()">✓ Pratiği Tamamla (+30 XP)</button>
+  </div>
+</div>
+
+<!-- ÇEVİRİ -->
+<div id="s-translate" class="screen">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:0.5rem">
+    <button class="btn btn-sm" onclick="goHome()">← Geri</button>
+    <h2 style="margin:0">Çeviri Egzersizi</h2>
+  </div>
+  <p class="muted" style="margin-bottom:1rem;font-size:13px">Türkçe cümleleri İspanyolcaya çevir.</p>
+  <div id="trans-loading" style="text-align:center;padding:3rem;color:#666">⏳ Hazırlanıyor...</div>
+  <div id="trans-area" style="display:none">
+    <div id="trans-qs"></div>
+    <button class="btn btn-primary btn-block" id="trans-btn" onclick="checkTranslations()">Kontrol Et</button>
+  </div>
+</div>
+
+<!-- HAFTALIK PLAN -->
+<div id="s-plan" class="screen">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:1rem">
+    <button class="btn btn-sm" onclick="goHome()">← Geri</button>
+    <h2 style="margin:0">Haftalık Program</h2>
+  </div>
+  <div class="card">
+    <p class="muted" style="margin-bottom:1rem">A2 → B1 için önerilen program (15–30 dk/gün)</p>
+    <div id="weekly-plan"></div>
+  </div>
+  <div class="card">
+    <h3>B1'e Geçiş İçin Kritik Konular</h3>
+    <ul style="font-size:14px;color:#444;padding-left:1.25rem;line-height:2">
+      <li>Pretérito indefinido (geçmiş zaman)</li>
+      <li>Pretérito imperfecto (süregelen geçmiş)</li>
+      <li>Subjuntivo temelleri</li>
+      <li>Reflexif fiiller (me llamo, me levanto...)</li>
+      <li>Sıfat uyumu ve karşılaştırma</li>
+    </ul>
+  </div>
+</div>
+
+<!-- PROFİL -->
+<div id="s-profile" class="screen">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:1rem">
+    <button class="btn btn-sm" onclick="goHome()">← Geri</button>
+    <h2 style="margin:0">Profilim</h2>
+  </div>
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem">
+      <div style="width:52px;height:52px;border-radius:50%;background:#eeedfe;display:flex;align-items:center;justify-content:center;font-size:24px">🇪🇸</div>
+      <div>
+        <div style="font-weight:600;font-size:16px">İspanyolca Öğreniyorum</div>
+        <div style="display:flex;gap:6px;margin-top:4px">
+          <span class="level-badge" id="prof-level">A2</span>
+          <span class="badge badge-purple" id="prof-xp">⭐ 0 XP</span>
+        </div>
+      </div>
+    </div>
+    <div style="margin-bottom:0.75rem">
+      <div style="display:flex;justify-content:space-between;font-size:13px;color:#666;margin-bottom:4px">
+        <span>Seviye ilerleme</span><span id="prof-xp-label">0 / 100 XP</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="prof-xp-bar" style="width:0%"></div></div>
+    </div>
+    <div class="stat-row"><span>Toplam ders</span><b id="s-lessons">0</b></div>
+    <div class="stat-row"><span>Mevcut seri</span><b id="s-streak">0 gün 🔥</b></div>
+    <div class="stat-row"><span>Doğruluk oranı</span><b id="s-acc">—</b></div>
+    <div class="stat-row"><span>Öğrenilen kelime</span><b id="s-words">0</b></div>
+    <div class="stat-row"><span>Toplam XP</span><b id="s-xp">0</b></div>
+  </div>
+  <button class="btn btn-block" onclick="if(confirm('Tüm ilerleme silinsin mi?'))resetAll()">🗑 Sıfırla</button>
+</div>
+
+<!-- İSTATİSTİK -->
+<div id="s-stats" class="screen">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:1rem">
+    <button class="btn btn-sm" onclick="goHome()">← Geri</button>
+    <h2 style="margin:0">İstatistiklerim</h2>
+  </div>
+  <div class="card">
+    <div class="stat-row"><span>Bugünkü XP</span><b id="st-today">0</b></div>
+    <div class="stat-row"><span>Bu haftaki aktiviteler</span><b id="st-week">0</b></div>
+    <div class="stat-row"><span>Toplam doğru</span><b id="st-correct">0</b></div>
+    <div class="stat-row"><span>Toplam yanlış</span><b id="st-wrong">0</b></div>
+    <div class="stat-row"><span>En uzun seri</span><b id="st-best-streak">0 gün</b></div>
+    <div class="stat-row"><span>Seviye</span><b id="st-level">A2</b></div>
+  </div>
+  <div class="card" id="streak-card">
+    <h3>Son 7 Gün</h3>
+    <div id="week-dots" style="display:flex;gap:8px;margin-top:0.5rem"></div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+// ============ VERİ ============
+const LEVELS=['A1','A2','B1','B2','C1','C2'];
+const XP_PER_LEVEL=[0,100,250,450,700,1000];
+const DAYS=['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'];
+const GREETINGS=['Buenos días! 👋','¡Hola! 👋','¡Buenas tardes! 👋','¡Buenas noches! 👋'];
+
+const DEFAULT_STATE={
+  level:'A2',xp:100,streak:0,bestStreak:0,
+  totalLessons:0,totalCorrect:0,totalWrong:0,totalWords:0,
+  todayXP:0,weekActs:0,lastActiveDate:'',
+  activities:[],completedToday:[],
+  weekHistory:[]
+};
+
+let S=load();
+if(!S.activities||!S.activities.length)S.activities=freshActivities();
+
+function freshActivities(){
+  return[
+    {id:'vocab',title:'Kelime Testi',desc:'Seviyene göre 5 yeni soru',icon:'📚',xp:20,type:'quiz',done:false},
+    {id:'speak',title:'Konuşma Pratiği',desc:'İspanyolca sohbet et',icon:'💬',xp:30,type:'chat',done:false},
+    {id:'translate',title:'Çeviri Egzersizi',desc:'4 cümleyi çevir',icon:'✏️',xp:25,type:'translate',done:false},
+  ];
+}
+
+function save(){localStorage.setItem('isp_koc_v3',JSON.stringify(S))}
+function load(){try{const d=localStorage.getItem('isp_koc_v3');return d?JSON.parse(d):{...DEFAULT_STATE}}catch(e){return{...DEFAULT_STATE}}}
+
+// ============ GÜN KONTROLÜ ============
+function checkDay(){
+  const today=new Date().toDateString();
+  if(S.lastActiveDate!==today){
+    // Yeni gün
+    const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+    if(S.lastActiveDate===yesterday.toDateString()){
+      S.streak++;
+      if(S.streak>S.bestStreak)S.bestStreak=S.streak;
+    } else if(S.lastActiveDate&&S.lastActiveDate!==today){
+      S.streak=0;
+    }
+    S.activities=freshActivities();
+    S.completedToday=[];
+    S.todayXP=0;
+    S.weekHistory=S.weekHistory||[];
+    S.weekHistory.push({date:S.lastActiveDate,done:S.completedToday?S.completedToday.length:0});
+    if(S.weekHistory.length>7)S.weekHistory.shift();
+    S.lastActiveDate=today;
+    save();
+  }
+}
+
+// ============ GENEL ============
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function goHome(){show('s-home');renderHome()}
+
+function startApp(){
+  checkDay();
+  renderHome();
+  show('s-home');
+}
+
+function greeting(){
+  const h=new Date().getHours();
+  if(h<12)return'Buenos días! 👋';
+  if(h<18)return'¡Buenas tardes! 👋';
+  return'¡Buenas noches! 👋';
+}
+
+function renderHome(){
+  checkDay();
+  document.getElementById('home-greeting').textContent=greeting();
+  document.getElementById('home-level').textContent=S.level;
+  document.getElementById('home-xp').textContent='⭐ '+S.xp+' XP';
+  document.getElementById('home-streak').textContent='🔥 '+S.streak+' gün';
+
+  const done=S.completedToday.length,total=S.activities.length;
+  const pct=Math.round(done/total*100);
+  document.getElementById('daily-prog').style.width=pct+'%';
+  document.getElementById('daily-pct').textContent=pct+'%';
+  document.getElementById('acts-done').textContent=done+' / '+total+' aktivite';
+  document.getElementById('today-xp-label').textContent='+'+S.todayXP+' XP bugün';
+
+  // Bildirim banner
+  const banner=document.getElementById('notif-banner');
+  if(done===0){
+    document.getElementById('notif-msg').textContent='Bugün henüz pratik yapmadın! Hadi başlayalım. 💪';
+    banner.style.display='block';
+  } else if(done<total){
+    document.getElementById('notif-msg').textContent=done+' aktivite tamamlandı. '+( total-done)+' aktivite daha var!';
+    banner.style.display='block';
+  } else {
+    banner.style.display='none';
+  }
+
+  const list=document.getElementById('activities-list');
+  list.innerHTML='';
+  S.activities.forEach((a,i)=>{
+    const d=document.createElement('div');
+    d.className='activity-item'+(a.done?' done':'');
+    d.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="display:flex;gap:12px;align-items:center">
+        <span style="font-size:28px">${a.icon}</span>
+        <div>
+          <div style="font-size:15px;font-weight:600">${a.title}</div>
+          <div style="font-size:12px;color:#888">${a.desc}</div>
+        </div>
+      </div>
+      <div style="text-align:right;min-width:60px">
+        <div style="font-size:13px;color:#7F77DD;font-weight:600">+${a.xp} XP</div>
+        ${a.done?'<div style="font-size:11px;color:#1D9E75;margin-top:2px">✓ Tamam</div>':'<div style="font-size:11px;color:#999;margin-top:2px">→ Başla</div>'}
+      </div>
+    </div>`;
+    if(!a.done)d.onclick=()=>startActivity(a,i);
+    list.appendChild(d);
+  });
+}
+
+// ============ AKTİVİTE ============
+let curActIdx=-1;
+function startActivity(a,i){curActIdx=i;if(a.type==='quiz')startQuiz(a);else if(a.type==='chat')startChat();else startTranslate();}
+
+function completeActivity(xp){
+  if(curActIdx<0)return;
+  const a=S.activities[curActIdx];if(a.done)return;
+  a.done=true;S.completedToday.push(a.id);
+  S.xp+=xp||a.xp;S.todayXP+=xp||a.xp;S.weekActs++;S.totalLessons++;
+  if(!S.lastActiveDate)S.lastActiveDate=new Date().toDateString();
+  checkLevelUp();save();
+  showXPAnim('+'+(xp||a.xp)+' XP');
+}
+
+function checkLevelUp(){
+  const idx=LEVELS.indexOf(S.level);
+  if(idx<LEVELS.length-1&&S.xp>=XP_PER_LEVEL[idx+1]){
+    S.level=LEVELS[idx+1];
+    setTimeout(()=>alert('🎉 Tebrikler! '+S.level+' seviyesine ulaştın! ¡Enhorabuena!'),400);
+  }
+}
+
+function showXPAnim(txt){
+  const el=document.getElementById('xp-anim');
+  el.textContent=txt;el.style.opacity='1';el.style.transform='translate(-50%,-70%)';
+  setTimeout(()=>{el.style.opacity='0';el.style.transform='translate(-50%,-50%)';},1500);
+}
+
+// ============ QUIZ ============
+let quizQs=[],quizIdx=0,quizScore=0;
+
+const FALLBACK_QS=[
+  {q:'"Me gustaría..." ne anlama gelir?',opts:['Sevmiyorum','...istiyorum/İsterdim','...gidiyorum','...anlıyorum'],correct:1},
+  {q:'Pretérito indefinido hangisi?',opts:['Hablo','Hablaba','Hablé','Hablaré'],correct:2},
+  {q:'"Aunque" ne demek?',opts:['Çünkü','Her ne kadar/Rağmen','Fakat','Dolayısıyla'],correct:1},
+  {q:'"¿Cuánto tiempo llevas...?" ne soruyor?',opts:['Ne zaman bitecek?','Ne zamandan beri?','Kaç saat sürer?','Ne zaman başladı?'],correct:1},
+  {q:'Reflexif fiil hangisi?',opts:['Comer','Levantarse','Hablar','Tener'],correct:1},
+];
+
+async function startQuiz(a){
+  show('s-quiz');
+  document.getElementById('quiz-title').textContent=a.title;
+  document.getElementById('quiz-loading').style.display='block';
+  document.getElementById('quiz-area').style.display='none';
+  quizQs=[];quizIdx=0;quizScore=0;
+
+  const prompt=`İspanyolca öğrenen ${S.level} seviyesi Türk öğrenci için 5 çoktan seçmeli soru. SADECE JSON array döndür:
+[{"q":"soru metni","opts":["A","B","C","D"],"correct":0}]
+Sorular kelime, gramer veya deyim olabilir. Türkçe açıklama ekleyebilirsin. Başka hiçbir şey yazma.`;
+
+  try{
+    const r=await callClaude(prompt,600);
+    quizQs=JSON.parse(r.replace(/```json|```/g,'').trim());
+  }catch(e){quizQs=[...FALLBACK_QS];}
+
+  document.getElementById('quiz-loading').style.display='none';
+  document.getElementById('quiz-area').style.display='block';
+  renderQuizQ();
+}
+
+function renderQuizQ(){
+  const q=quizQs[quizIdx];
+  document.getElementById('quiz-counter').textContent=(quizIdx+1)+' / '+quizQs.length;
+  document.getElementById('quiz-score-label').textContent='✓ '+quizScore+' doğru';
+  document.getElementById('quiz-prog').style.width=Math.round((quizIdx+1)/quizQs.length*100)+'%';
+  document.getElementById('quiz-q').textContent=q.q;
+  document.getElementById('quiz-fb').style.display='none';
+  document.getElementById('quiz-next').style.display='none';
+  const c=document.getElementById('quiz-opts');c.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');b.className='opt-btn';b.textContent=o;
+    b.onclick=()=>answerQuiz(i,b,q);c.appendChild(b);
+  });
+}
+
+function answerQuiz(idx,btn,q){
+  document.querySelectorAll('#quiz-opts .opt-btn').forEach(b=>b.style.pointerEvents='none');
+  const fb=document.getElementById('quiz-fb');
+  if(idx===q.correct){btn.className='opt-btn correct';quizScore++;S.totalCorrect++;fb.className='feedback ok';fb.textContent='✓ ¡Muy bien! Doğru!';}
+  else{btn.className='opt-btn wrong';document.querySelectorAll('#quiz-opts .opt-btn')[q.correct].className='opt-btn correct';S.totalWrong++;fb.className='feedback err';fb.textContent='✗ Yanlış. Doğru cevap: '+q.opts[q.correct];}
+  fb.style.display='block';document.getElementById('quiz-next').style.display='block';
+}
+
+function nextQuizQ(){
+  quizIdx++;
+  if(quizIdx<quizQs.length)renderQuizQ();
+  else{S.totalWords+=quizScore;completeActivity();goHome();}
+}
+
+// ============ CHAT ============
+let chatHistory=[],chatMsgCount=0;
+
+async function startChat(){
+  show('s-chat');chatHistory=[];chatMsgCount=0;
+  document.getElementById('chat-msgs').innerHTML='';
+  document.getElementById('chat-done-area').style.display='none';
+  document.getElementById('chat-input').value='';
+
+  const sys=`Sen deneyimli bir İspanyolca öğretmenisin. Öğrenci ${S.level} seviyesinde Türk. Sohbeti İspanyolca yürüt, öğrencinin hatalarını nazikçe Türkçe parantez içinde düzelt. Kısa ve anlaşılır cevaplar ver. Konuşmayı ilgi çekici tut.`;
+  addMsg('ai','⏳ Hazırlanıyor...');
+  try{
+    const r=await callClaudeChat(sys,[{role:'user',content:'Merhaba, pratik yapmak istiyorum.'}],200);
+    document.getElementById('chat-msgs').lastChild.textContent=r;
+    chatHistory=[{role:'user',content:'Merhaba, pratik yapmak istiyorum.'},{role:'assistant',content:r}];
+  }catch(e){
+    const fb='¡Hola! ¿Cómo estás hoy? Cuéntame algo interesante. 😊';
+    document.getElementById('chat-msgs').lastChild.textContent=fb;
+    chatHistory=[{role:'user',content:'Merhaba'},{role:'assistant',content:fb}];
+  }
+}
+
+function addMsg(who,txt){
+  const m=document.createElement('div');m.className='msg '+who;m.textContent=txt;
+  const c=document.getElementById('chat-msgs');c.appendChild(m);c.scrollTop=c.scrollHeight;return m;
+}
+
+async function sendChat(){
+  const inp=document.getElementById('chat-input');const txt=inp.value.trim();if(!txt)return;
+  inp.value='';chatMsgCount++;addMsg('user',txt);
+  chatHistory.push({role:'user',content:txt});
+  const sys=`Sen deneyimli bir İspanyolca öğretmenisin. Öğrenci ${S.level} seviyesinde. İspanyolca konuş, hataları nazikçe Türkçe parantez içinde düzelt. Kısa cevap ver.`;
+  const lm=addMsg('ai','⏳...');
+  try{
+    const r=await callClaudeChat(sys,chatHistory,200);
+    lm.textContent=r;chatHistory.push({role:'assistant',content:r});
+    document.getElementById('chat-msgs').scrollTop=9999;
+  }catch(e){lm.textContent='(Bağlantı hatası, tekrar dene)';}
+  if(chatMsgCount>=4)document.getElementById('chat-done-area').style.display='block';
+}
+
+function completeChatAct(){completeActivity(30);goHome();}
+
+// ============ ÇEVİRİ ============
+let transData=[];
+const FALLBACK_TRANS=[
+  {tr:'Dün akşam arkadaşımla sinemaya gittim.',target:'Ayer por la noche fui al cine con mi amigo.'},
+  {tr:'Hava bugün çok güzel, dışarı çıkalım.',target:'Hace muy buen tiempo hoy, salgamos afuera.'},
+  {tr:'Kaç yıldır İspanyolca öğreniyorsun?',target:'¿Cuántos años llevas aprendiendo español?'},
+  {tr:'Bu kitabı daha önce okudun mu?',target:'¿Has leído este libro antes?'},
+];
+
+async function startTranslate(){
+  show('s-translate');
+  document.getElementById('trans-loading').style.display='block';
+  document.getElementById('trans-area').style.display='none';
+
+  const prompt=`İspanyolca öğrenen ${S.level} seviyesi Türk öğrenci için 4 çeviri egzersizi. SADECE JSON:
+[{"tr":"Türkçe cümle","target":"İspanyolca karşılığı"}]
+Başka hiçbir şey yazma.`;
+
+  try{
+    const r=await callClaude(prompt,400);
+    transData=JSON.parse(r.replace(/```json|```/g,'').trim());
+  }catch(e){transData=[...FALLBACK_TRANS];}
+
+  document.getElementById('trans-loading').style.display='none';
+  document.getElementById('trans-area').style.display='block';
+  const qs=document.getElementById('trans-qs');qs.innerHTML='';
+  transData.forEach((item,i)=>{
+    qs.innerHTML+=`<div style="margin-bottom:1.25rem">
+      <div style="font-size:14px;font-weight:600;margin-bottom:6px;color:#1a1a2e">${i+1}. ${item.tr}</div>
+      <input class="trans-input" id="tr-${i}" type="text" placeholder="İspanyolca çevirisini yaz...">
+      <div id="tr-fb-${i}" style="display:none;margin-top:5px;font-size:13px;padding:6px 10px;border-radius:8px"></div>
+    </div>`;
+  });
+}
+
+function checkTranslations(){
+  let correct=0;
+  transData.forEach((item,i)=>{
+    const val=document.getElementById('tr-'+i).value.trim().toLowerCase();
+    const ans=item.target.toLowerCase();
+    const fb=document.getElementById('tr-fb-'+i);fb.style.display='block';
+    if(val===ans||similarity(val,ans)>0.72){
+      correct++;S.totalCorrect++;
+      fb.style.background='#e1f5ee';fb.style.color='#085041';fb.textContent='✓ ¡Muy bien!';
+    }else{
+      S.totalWrong++;
+      fb.style.background='#fcebeb';fb.style.color='#501313';fb.textContent='✗ Doğrusu: '+item.target;
+    }
+  });
+  S.totalWords+=correct;
+  document.getElementById('trans-btn').style.display='none';
+  setTimeout(()=>{completeActivity(25);goHome();},2200);
+}
+
+// ============ HAFTALIK PLAN ============
+function renderPlan(){
+  const plan=[
+    {gun:'Pazartesi',acts:'📚 Kelime + ✏️ Çeviri',focus:'Pretérito indefinido',dk:'20 dk'},
+    {gun:'Salı',acts:'💬 Konuşma Pratiği',focus:'Serbest konuşma',dk:'15 dk'},
+    {gun:'Çarşamba',acts:'📚 Kelime + ✏️ Çeviri',focus:'Reflexif fiiller',dk:'20 dk'},
+    {gun:'Perşembe',acts:'💬 Konuşma Pratiği',focus:'Günlük diyalog',dk:'15 dk'},
+    {gun:'Cuma',acts:'📚 + 💬 + ✏️ Tam set',focus:'Haftanın özeti',dk:'30 dk'},
+    {gun:'Cumartesi',acts:'💬 Konuşma Pratiği',focus:'Bir konu seç, anlat',dk:'20 dk'},
+    {gun:'Pazar',acts:'🎯 Serbest tekrar',focus:'Hataları gözden geçir',dk:'10 dk'},
+  ];
+  const today=new Date().getDay();
+  document.getElementById('weekly-plan').innerHTML=plan.map((p,i)=>{
+    const isToday=(i+1)%7===today;
+    return`<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f0effe${i===6?';border-bottom:none':''}">
+      <div>
+        <div style="font-size:14px;font-weight:${isToday?'700':'500'};color:${isToday?'#7F77DD':'#1a1a2e'}">${isToday?'→ ':''} ${p.gun}</div>
+        <div style="font-size:12px;color:#888;margin-top:2px">${p.acts}</div>
+        <div style="font-size:12px;color:#aaa">${p.focus}</div>
+      </div>
+      <span style="font-size:12px;color:#999;white-space:nowrap;padding-top:2px">${p.dk}</span>
+    </div>`;
+  }).join('');
+}
+
+// ============ PROFİL & STATS ============
+function showProfile(){
+  show('s-profile');
+  document.getElementById('prof-level').textContent=S.level;
+  document.getElementById('prof-xp').textContent='⭐ '+S.xp+' XP';
+  document.getElementById('s-lessons').textContent=S.totalLessons;
+  document.getElementById('s-streak').textContent=S.streak+' gün 🔥';
+  const acc=S.totalCorrect+S.totalWrong>0?Math.round(S.totalCorrect/(S.totalCorrect+S.totalWrong)*100)+'%':'—';
+  document.getElementById('s-acc').textContent=acc;
+  document.getElementById('s-words').textContent=S.totalWords;
+  document.getElementById('s-xp').textContent=S.xp;
+  const idx=LEVELS.indexOf(S.level);
+  const cur=XP_PER_LEVEL[idx],next=XP_PER_LEVEL[idx+1]||S.xp+100;
+  document.getElementById('prof-xp-bar').style.width=Math.round((S.xp-cur)/(next-cur)*100)+'%';
+  document.getElementById('prof-xp-label').textContent=S.xp+' / '+next+' XP';
+}
+
+function showStats(){
+  show('s-stats');
+  document.getElementById('st-today').textContent=S.todayXP+' XP';
+  document.getElementById('st-week').textContent=S.weekActs;
+  document.getElementById('st-correct').textContent=S.totalCorrect;
+  document.getElementById('st-wrong').textContent=S.totalWrong;
+  document.getElementById('st-best-streak').textContent=(S.bestStreak||0)+' gün';
+  document.getElementById('st-level').textContent=S.level;
+  // Son 7 gün
+  const dots=document.getElementById('week-dots');dots.innerHTML='';
+  const today=new Date().toDateString();
+  for(let i=6;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const ds=d.toDateString();
+    const hist=S.weekHistory||[];
+    const done=ds===today?S.completedToday.length:(hist.find(h=>h.date===ds)||{done:0}).done;
+    const dot=document.createElement('div');
+    dot.style.cssText=`width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;background:${done>0?'#7F77DD':'#ede9ff'};color:${done>0?'#fff':'#999'}`;
+    dot.textContent=DAYS[d.getDay()];
+    dots.appendChild(dot);
+  }
+}
+
+function resetAll(){
+  localStorage.removeItem('isp_koc_v3');
+  S={...DEFAULT_STATE,activities:freshActivities(),lastActiveDate:new Date().toDateString()};
+  save();location.reload();
+}
+
+// ============ API ============
+async function callClaude(prompt,maxTokens){
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens||500,messages:[{role:'user',content:prompt}]})});
+  const d=await r.json();
+  return d.content.map(i=>i.text||'').join('');
+}
+
+async function callClaudeChat(system,messages,maxTokens){
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens||300,system,messages})});
+  const d=await r.json();
+  return d.content.map(i=>i.text||'').join('');
+}
+
+// ============ YARDIMCI ============
+function similarity(a,b){
+  const l=a.length>b.length?a:b,s=a.length>b.length?b:a;
+  if(!l.length)return 1;
+  return(l.length-editDist(l,s))/l.length;
+}
+function editDist(a,b){
+  const dp=Array.from({length:a.length+1},(_,i)=>Array.from({length:b.length+1},(_,j)=>i||j));
+  for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)
+    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[a.length][b.length];
+}
+
+// ============ BAŞLAT ============
+// Profil ve stats butonlarını route et
+document.getElementById('s-profile').querySelector('button').onclick=goHome;
+document.getElementById('s-stats').querySelector('button').onclick=goHome;
+document.getElementById('s-plan').querySelector('button').onclick=goHome;
+
+// Plan render
+document.getElementById('s-home').querySelector('button[onclick="show(\'s-plan\')"]').addEventListener('click',renderPlan);
+
+// Kayıtlı veri varsa direkt ana ekrana
+if(S.totalLessons>0){startApp();}
+</script>
+</body>
+</html>
